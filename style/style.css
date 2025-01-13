@@ -40,7 +40,8 @@
   border-bottom-left-radius: 25px;
   border: none;
   outline: none;
-
+  font-size: 20px;
+  font-weight: 900;
   background: linear-gradient(90deg, rgba(60,62,66,1) 0%, rgba(38,42,45,1) 35%); 
   color: var(--secondary-color);
   padding-left: 20px;
@@ -79,13 +80,26 @@
   box-shadow: 0px -2px 15px rgba(0, 0, 0, 0.2);
   border-radius: 20px 20px 0 0; 
 }
+.info {
+  color: var(--secondary-color);
+}
 
 .celcius {
   font-size: 60px;
   font-weight: 200;
-  color: var(--secondary-color);
+}
+
+.city {
+  font-size: 30px;
 }
 
 .details img {
+<<<<<<< HEAD
   width: 50px;
 }
+=======
+  width: 40px;
+}
+
+
+>>>>>>> b5a1f640cc4cea6d3e120bb50dfe2456f53aa703
