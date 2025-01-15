@@ -13,23 +13,49 @@
 <body>
   <img class="bg-img" src="/assets/bg-img.jpg" alt="">
   <div class="content">
+    <div class="megapolis__forecast">
+      <div class="megapolis">
+        <div class="section section-left">
+          <h6>Partly Cloudy</h6>
+          <img src="/assets/sun.png" alt="" class="icon">
+        </div>
+        <div class="section section-right">
+          <h5 class="city__name">Tokyo</h5>
+          <p class="temp">30°</p>
+        </div>
+      </div>
+    </div>
     <div class="weather_deashboard">
       <div class="search__bar">
-        <input type="text">
+        <input id="searchbox" type="text" placeholder="Search City">
         <button id="searchbtn"><img src="/assets/search.png" alt=""></button>
+        <div id="error-message" class="error-popup">
+          <div class="error-popup-content">
+            <span>City not found, please try again.</span>
+            <button id="close-popup">Close</button>
+          </div>
+        </div>
       </div>
       <div class="dashboard">
         <div class="info">
-          <span class="celcius">30C°</span>
-          <span class="city">London</span>
+          <span class="sky"></span>
+          <span class="celcius"></span>
+          <span class="city"></span>
         </div>
         <div class="details">
-          <img src="/assets/humodity.png" alt="">
-          <img src="/assets/wind.png" alt="">
+          <div class="details_flexbox">
+            <img src="/assets/humodity.png" alt="humidity">
+            <span class="humidity__indicator"></span>
+          </div>
+          <div class="details_flexbox">
+            <img src="/assets/wind.png" alt="wind">
+            <span class="wind__speed">km/h</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <script src="/main.js"></script>
 </body>
 
 </html>
