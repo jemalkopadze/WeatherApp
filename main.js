@@ -27,16 +27,20 @@ const megapolisCities = [
 async function getWeather(city) {
   try {
     const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+    const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
 
-    if (!weatherResponse.ok) {
+    if (!weatherResponse.ok || !forecastResponse.ok) {
       throw new Error('City not found');
     }
 
-    const currentData = await weatherResponse.json()
-    console.log(currentData)
+    const currentData = await weatherResponse.json();
+    const forecastData = await forecastResponse.json();
+    console.log(currentData);
+
 
     // Update UI
     updateCurrentWeather(currentData);
+    updateForecast(forecastData)
     hideErrorPopup();
 
   } catch (err) {
@@ -67,16 +71,13 @@ async function updateMegapolis() {
       sectionLeft.className = 'section section-left';
 
       const description = document.createElement('h6');
-      description.textContent = capitalizeFirstLetter(data.weather[0].description);
+      description.textContent = capitalizeFirstLetter(data.weather[0].main);
 
       
       const icon = document.createElement('img');
       icon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
       icon.className = 'weather-icon';
 
-
-
-      
       const sectionRight = document.createElement('div');
       sectionRight.className = 'section section-right ';
 
@@ -90,8 +91,6 @@ async function updateMegapolis() {
       temp.className = 'temp';
       temp.textContent = `${Math.round(data.main.temp)}°`;
 
-
-
       //Add the complete elemets to container 
       megapolisContainer.appendChild(megapolisElement)
 
@@ -102,21 +101,49 @@ async function updateMegapolis() {
       sectionRight.appendChild(cityName);
       sectionRight.appendChild(temp);
     })
-
-
-
   } catch (err) {
-
+    console.log('err')
   }
 
+}
+
+function updateForecast (data) {
+  const forecastContainer = document.querySelector('.forecast-items');
+  if(!forecastContainer) return;
+  forecastContainer.innerHTML= '';
+
+  try {
+    const dailyForecasts = data.list.filter(item => item.dt_txt.includes('12:00:00')).slice(0, 5);
+
+    dailyForecasts.forEach((forecast) => {
+      const date = new Date(forecast.dt * 1000);
+      const dayName = date.toLocaleDateString('en-US', {weekday: 'short'});
+
+      const forecastElement = document.createElement('div');
+      forecastElement.className = 'forecast-item';
+      forecastElement.innerHTML = `
+      <div class="forecast-day">${dayName}</div>
+      <img class="forecast-icon" src="https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png" alt="weather icon">
+      <div class="forecast-temp">${Math.round(forecast.main.temp)}°</div>
+      <div class="forecast-desc">${capitalizeFirstLetter(forecast.weather[0].description)}</div>
+      `
+      forecastContainer.appendChild(forecastElement)
+
+    })
+  }catch (err) {
+    console.log('forecast notfound')
+  }
+  
 }
 
 function updateCurrentWeather(data) {
   temperature.textContent = `${Math.round(data.main.temp)}°C`;
   town.textContent = data.name;
   humidityIndicator.textContent = `${data.main.humidity}%`;
-  windSpeed.textContent = `${data.wind.speed} km/h`;
+  windSpeed.textContent = `${Math.round(data.wind.speed)} km/h`;
   sky.textContent = data.weather[0].description;
+
+  changeBackground(data.weather[0].description)
 }
 
 function clearWeatherData() {
@@ -125,16 +152,54 @@ function clearWeatherData() {
   humidityIndicator.textContent = '--';
   windSpeed.textContent = '--';
   sky.textContent = '--';
+  clearForecast()
+  
+}
+
+function clearForecast() {
+  const forecastContainer = document.querySelector('.forecast-items');
+  if (forecastContainer) {
+    forecastContainer.innerHTML = '';
+  }
 }
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function changeBackground(weatherCondition) {
+  const backgrounIMG = document.querySelector('.bg-img');
+
+  const condition = weatherCondition.toLowerCase();
+
+  let backgroundPath;
+
+  if(condition.includes('clear') || condition.includes('sunny')) {
+    backgroundPath = '/assets/clear.jpg';
+
+  }else if(condition.includes('clouds') || condition.includes('cloudy')) {
+    backgroundPath = '/assets/clouds.jpg'
+  }else if(condition.includes('rain') || condition.includes('light rain') || condition.includes('drizzle')) {
+    backgroundPath = '/assets/rain.jpg';
+  }else if(condition.includes('Snow') || condition.includes('light snow')) {
+    backgroundPath = '/assets/snow.jpg'
+  }else if(condition.includes('mist') || condition.includes('fog') || condition.includes('haze')) {
+    backgroundPath = '/assets/bg-img.jpg';
+  }
+  backgrounIMG.style.opacity = 1;
+
+
+   setTimeout(() => {
+    backgrounIMG.src = backgroundPath;
+    backgrounIMG.style.opacity = '1';
+  }, 500);
+}
+
 searchBtn.addEventListener('click', () => {
   const city = searchBox.value.trim();
   if (city !== '') {
     getWeather(city);
+    searchBox.value = '';
   } else {
     clearWeatherData();
   }
@@ -145,9 +210,12 @@ searchBox.addEventListener('keyup', (e) => {
     const city = searchBox.value.trim();
     if (city !== '') {
       getWeather(city);
+    searchBox.value = '';
     }
   }
 });
+
+closeBtn.addEventListener('click', hideErrorPopup);
 
 function showErrorPopup() {
   errorMessage.style.display = 'block';
@@ -157,10 +225,7 @@ function hideErrorPopup() {
   errorMessage.style.display = 'none';
 }
 
-closeBtn.addEventListener('click', hideErrorPopup);
-
 window.addEventListener('load', () => {
   getWeather('Tbilisi');
   updateMegapolis();
-  setInterval(updateMegapolis, 300000);  // Update every 5 minutes
 });

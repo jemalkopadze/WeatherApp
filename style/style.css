@@ -15,6 +15,7 @@
   top: 0;
   left: 0;
   z-index: -1;
+  transition: opacity 0.3s linear;
 }
 
 .megapolis__forecast {
@@ -37,7 +38,7 @@
   position: relative;
   width: 200px;
   height: 80px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.21);
   backdrop-filter: blur(5px);
   border-radius: 15px;
   overflow: hidden;
@@ -191,6 +192,7 @@
 
 .details img {
   width: 40px;
+  padding-right: 12px;
 }
 
 .details_flexbox {
@@ -199,12 +201,12 @@
   align-items: center;
 }
 
-.megapolis{
+.megapolis {
   display: flex;
   justify-content: space-between;
 }
 
-.section  {
+.section {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -249,16 +251,58 @@
   transform: scale(1.05);
 }
 
-@media (max-width: 768px) {
-  .megapolis__forecast {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    padding: 10px;
-  }
-  
-  .weather-icon {
-    width: 40px;
-    height: 40px;
-  }
+.forecast-section {
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 20px;
 }
 
+.forecast-items {
+  position: absolute;
+  left: 50%;
+  top: 67%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: space-around;
+  gap: 50px;
+  padding: 10px;
+}
+
+.forecast-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.21);
+  backdrop-filter: blur(5px);
+  border-radius: 15px;
+  color: var(--secondary-color);
+  min-width: 100px;
+  transition: transform 0.3s ease;
+}
+
+.forecast-item:hover {
+  transform: scale(1.05);
+}
+
+.forecast-day {
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.forecast-icon {
+  width: 40px;
+  height: 40px;
+  margin: 5px 0;
+}
+
+.forecast-temp {
+  font-size: 1.2em;
+  font-weight: 300;
+}
+
+.forecast-desc {
+  font-size: 0.9em;
+  opacity: 0.8;
+  text-align: center;
+}
