@@ -26,12 +26,12 @@ const megapolisCities = [
 //Get weather for single city
 async function getWeather(city) {
   try {
-    const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
-    const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)
+    console.log("")
+    const [weatherResponse, forecastResponse] = await Promise.all([fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`),  fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`)]);
+      
+   
 
-    if (!weatherResponse.ok || !forecastResponse.ok) {
-      throw new Error('City not found');
-    }
+  
 
     const currentData = await weatherResponse.json();
     const forecastData = await forecastResponse.json();
@@ -44,6 +44,7 @@ async function getWeather(city) {
     hideErrorPopup();
 
   } catch (err) {
+    console.log("error")
     showErrorPopup();
     clearWeatherData();
   }
